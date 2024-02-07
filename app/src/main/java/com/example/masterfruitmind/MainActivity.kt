@@ -15,7 +15,8 @@ import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-       var listFruits = InitListFruit("json/fruits.json")
+       var listFruits = initListFruit("json/fruits.json")
+        var listGame = shuffleListFruit(listFruits)
         super.onCreate(savedInstanceState)
         setContent {
             MasterFruitMindTheme {
@@ -30,12 +31,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun InitListFruit(pathFile: String): List<fruits>{
-        var JsonFile = assets.open(pathFile)
-        var fruits = JsonFile.bufferedReader().use { it.readText() }
+    fun initListFruit(pathFile: String): List<fruits>{
+        var jsonFile = assets.open(pathFile)
+        var fruits = jsonFile.bufferedReader().use { it.readText() }
         val gson = Gson()
         val fruitsArray = gson.fromJson(fruits, Array<fruits>::class.java)
         return fruitsArray.toList()
+    }
+
+    fun shuffleListFruit(listFruits: List<fruits>): List<fruits> {
+        return listFruits.shuffled().take(4)
     }
 
 }
