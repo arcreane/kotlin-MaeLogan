@@ -1,0 +1,44 @@
+{
+  "fruits": [
+    {
+      "name": "Fraise",
+      "withseed": false,
+      "peelable": false
+    },
+    {
+      "name": "Banane",
+      "withseed": false,
+      "peelable": true
+    },
+    {
+      "name": "Framboise",
+      "withseed": false,
+      "peelable": false
+    },
+    {
+      "name": "Kiwi",
+      "withseed": false,
+      "peelable": true
+    },
+    {
+      "name": "Orange",
+      "withseed": true,
+      "peelable": true
+    },
+    {
+      "name": "Prune",
+      "withseed": true,
+      "peelable": false
+    },
+    {
+      "name": "Raisin",
+      "withseed": true,
+      "peelable": false
+    },
+    {
+      "name": "Citron",
+      "withseed": true,
+      "peelable": true
+    }
+  ]
+}
