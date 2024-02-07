@@ -11,9 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.masterfruitmind.ui.theme.MasterFruitMindTheme
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+       var listFruits = InitListFruit("json/fruits.json")
         super.onCreate(savedInstanceState)
         setContent {
             MasterFruitMindTheme {
@@ -27,6 +29,15 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    fun InitListFruit(pathFile: String): List<fruits>{
+        var JsonFile = assets.open(pathFile)
+        var fruits = JsonFile.bufferedReader().use { it.readText() }
+        val gson = Gson()
+        val fruitsArray = gson.fromJson(fruits, Array<fruits>::class.java)
+        return fruitsArray.toList()
+    }
+
 }
 
 @Composable

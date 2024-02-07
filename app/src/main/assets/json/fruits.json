@@ -1,0 +1,56 @@
+ [
+   {
+      "name": "Fraise",
+      "withSeed": false,
+      "peelable": false,
+      "pathImage": "resources/images/fraise.png"
+ },
+ {
+      "name": "Banane",
+      "withSeed": false,
+      "peelable": true,
+      "pathImage": "resources/images/banane.png"
+ },
+    {
+      "name": "Framboise",
+      "withSeed": false,
+      "peelable": false,
+      "pathImage": "resources/images/framboise.png"
+
+    },
+    {
+      "name": "Kiwi",
+      "withSeed": false,
+      "peelable": true,
+      "pathImage": "resources/images/kiwi.png"
+
+    },
+    {
+      "name": "Orange",
+      "withSeed": true,
+      "peelable": true,
+      "pathImage": "resources/images/orange.png"
+
+    },
+    {
+      "name": "Prune",
+      "withSeed": true,
+      "peelable": false,
+      "pathImage": "resources/images/prune.png"
+
+    },
+    {
+      "name": "Raisin",
+      "withSeed": true,
+      "peelable": false,
+      "pathImage": "resources/images/raisin.png"
+
+    },
+    {
+      "name": "Citron",
+      "withSeed": true,
+      "peelable": true,
+      "pathImage": "resources/images/citron.png"
+
+    }
+   ]
