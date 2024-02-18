@@ -9,24 +9,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.masterfruitmind.ui.theme.MasterFruitMindTheme
 import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-       var listFruits = initListFruit("json/fruits.json")
-        var listGame = shuffleListFruit(listFruits)
         super.onCreate(savedInstanceState)
         setContent {
-            MasterFruitMindTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+            val nav_Controller = rememberNavController()
+            val viewModel = GameManager(initListFruit("json/fruits.json"))
+            NavHost(nav_Controller, startDestination = "home") {
+                composable("home") {HomeScreen(viewModel = viewModel, nav_Controller)}
+                composable("game") { GameScreen(viewModel = viewModel, navController = nav_Controller)}
             }
         }
     }
@@ -38,25 +38,7 @@ class MainActivity : ComponentActivity() {
         val fruitsArray = gson.fromJson(fruits, Array<fruits>::class.java)
         return fruitsArray.toList()
     }
-
-    fun shuffleListFruit(listFruits: List<fruits>): List<fruits> {
-        return listFruits.shuffled().take(4)
-    }
-
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MasterFruitMindTheme {
-        Greeting("Android")
-    }
-}
+
