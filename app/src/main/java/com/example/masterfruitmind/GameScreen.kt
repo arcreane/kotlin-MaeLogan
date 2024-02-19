@@ -35,26 +35,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.navigation.NavController
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun GameScreen(viewModel: GameManager, nav_controller: NavController) {
     val life by viewModel.life.observeAsState()
     val guessHistory by viewModel.historyGuessFruit.observeAsState()
     val resultHistory by viewModel.historyListFruit.observeAsState()
-    var has_win by remember { mutableStateOf(false) }
-    var isWinPopupVisible by remember { mutableStateOf(false) }
+    val has_win by viewModel.win.observeAsState()
     println(viewModel.shuffleFruits)
     val allFruits = listOf(
-        fruits("banane", false, true, R.drawable.banane),
-        fruits("raisin", true, false, R.drawable.raisin),
-        fruits("kiwi", false, true, R.drawable.kiwi),
-        fruits("citron", true, true, R.drawable.citron),
-        fruits("orange", true, true, R.drawable.orange),
-        fruits("prune", true, false, R.drawable.prune),
-        fruits("framboise", false, false, R.drawable.framboise),
-        fruits("fraise", false, false, R.drawable.fraise),
+        fruits("Banane", false, true, R.drawable.banane),
+        fruits("Raisin", true, false, R.drawable.raisin),
+        fruits("Kiwi", false, true, R.drawable.kiwi),
+        fruits("Citron", true, true, R.drawable.citron),
+        fruits("Orange", true, true, R.drawable.orange),
+        fruits("Prune", true, false, R.drawable.prune),
+        fruits("Framboise", false, false, R.drawable.framboise),
+        fruits("Fraise", false, false, R.drawable.fraise),
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -66,6 +64,7 @@ fun GameScreen(viewModel: GameManager, nav_controller: NavController) {
             ) {
                 Text(
                     text = "MasterMindFruits life = $life" ,
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
@@ -73,31 +72,33 @@ fun GameScreen(viewModel: GameManager, nav_controller: NavController) {
                 )
             }
 
-            resultHistory?.let { FruitsList(it) }
+            resultHistory?.let { guessHistory?.let { it1 -> FruitsList(it, it1, viewModel) } }
 
             Spacer(modifier = Modifier.weight(1f))
-            BottomBar(
-                fruitsList = allFruits,
-                onFruitSelected = {},
-                onGuessValidated = {
-                    if(viewModel.makeGuess(it)){
-                        has_win = true
-
-                    }
-                })
+            life?.let {
+                BottomBar(
+                    fruitsList = allFruits,
+                    onFruitSelected = {},
+                    onGuessValidated = {
+                        viewModel.makeGuess(it)
+                    })
+            }
         }
     }
 
-    if (has_win) {
-        isWinPopupVisible = true
+    if (has_win == true){
+        WinPopup(isWinPopupVisible = true, onRestartButtonClicked = { viewModel.restartGame() }, onQuitButtonClicked = {})
     }
 
-    WinPopup(
-        isWinPopupVisible = isWinPopupVisible,
-        onRestartButtonClicked = { viewModel.restartGame() },
-     { nav_controller.popBackStack() },
-        viewModel = viewModel)
 
+
+    if(life!! <= 0){
+        LoosePopup(
+            isLoosePopupVisible = true,
+            onRestartButtonClicked = { viewModel.restartGame() },
+            onQuitButtonClicked = {  }
+        )
+    }
 
 }
 
@@ -107,7 +108,6 @@ fun WinPopup(
     isWinPopupVisible: Boolean,
     onRestartButtonClicked: () -> Unit,
     onQuitButtonClicked: () -> Unit,
-    viewModel: GameManager
 ) {
     if (isWinPopupVisible) {
         AlertDialog(
@@ -133,13 +133,44 @@ fun WinPopup(
     }
 }
 
+@Composable
+fun LoosePopup(
+    isLoosePopupVisible: Boolean,
+    onRestartButtonClicked: () -> Unit,
+    onQuitButtonClicked: () -> Unit,
+) {
+    if (isLoosePopupVisible) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Game Over!") },
+            text = { Text("") },
+            confirmButton = {
+                Button(onClick = {
+                    onRestartButtonClicked()
+                }) {
+                    Text("Restart")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    onQuitButtonClicked()
+                }) {
+                    Text("Quit")
+                }
+            }
+        )
+    }
+}
+
+
 
 @Composable
-fun FruitsList(fruitsList: List<List<fruits>>) {
+fun FruitsList(fruitsList: List<List<fruits>>, guessList: List<List<Int>>, viewModel: GameManager) {
     Column(modifier = Modifier.padding(16.dp)) {
             fruitsList.withIndex().forEach { (index, fruitList) ->
+                var str = viewModel.calculateGuessResult(guessList[index])
                 Text(
-                    text = "Try number: ${index + 1} Fruits in this list:",
+                    text = "Try number: ${index + 1} : $str",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Row {
@@ -232,7 +263,7 @@ fun InputRow(fruitsList: List<fruits>, onFruitSelected: (fruits) -> Unit) {
 fun BottomBar(
     fruitsList: List<fruits>,
     onFruitSelected: (fruits) -> Unit,
-    onGuessValidated: (List<fruits>) -> Unit
+    onGuessValidated: (List<fruits>) -> Unit,
 ) {
     var inputList = List(4) { fruits("", false, false, 0 )}.toMutableList()
     Box(
@@ -259,7 +290,6 @@ fun BottomBar(
                 onClick = {
                     if (inputList.none { it.name == "" } && inputList.size == 4) {
                         onGuessValidated(inputList)
-
                     }
                 },
                 modifier = Modifier
