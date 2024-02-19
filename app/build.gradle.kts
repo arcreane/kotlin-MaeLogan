@@ -75,4 +75,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+
 }
